@@ -25,6 +25,10 @@ class WCell:
     RES = (16, 16)
     MAX_NEIGH = 4
 
+    # NEW PARAM
+    # This param is global to store currentstate
+    LAST_COST = 0.0
+
     def __init__(self, position, val=0):
         self.position = np.array(position)
         self.value = val
@@ -33,7 +37,10 @@ class WCell:
         self.is_tree = False
 
     def cost(self):
-        return self.value + 1
+        # NEW COST
+        c = ((WCell.LAST_COST % 2) + 1) + (self.value + 1)
+        WCell.LAST_COST = self.value + 1
+        return c
 
     def to_image(self):
         "Create numpy array image representation with resolution WCell.RES"
@@ -384,6 +391,7 @@ class Problem:
 
         Returns: solution STNode
         """
+        WCell.LAST_COST = 0.0 # RESET last_cost every time we solve
         STNode.IDC = 0
         solution = None
         if self.ALGORITHM == 'DEPTH':
